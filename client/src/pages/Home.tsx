@@ -4,6 +4,7 @@ import ConnectionStatus from "@/components/ConnectionStatus";
 import ConnectionOptions from "@/components/ConnectionOptions";
 import VideoSettings from "@/components/VideoSettings";
 import VideoPreview from "@/components/VideoPreview";
+import { DeviceDiscovery } from "@/components/DeviceDiscovery";
 import Footer from "@/components/Footer";
 import ConnectionErrorModal from "@/components/ConnectionErrorModal";
 import { useWebSocket } from "@/context/WebSocketContext";
@@ -41,21 +42,29 @@ const Home = () => {
       <main className="container mx-auto px-4 py-6 flex-grow">
         <ConnectionStatus connectionInfo={connectionInfo} />
         
-        <ConnectionOptions 
-          connectionInfo={connectionInfo}
-          onConnectClick={connect}
-          onDisconnectClick={disconnect}
-        />
-        
-        <VideoSettings 
-          connectionInfo={connectionInfo}
-          onSettingsChange={handleVideoSettingsChange}
-        />
-        
-        <VideoPreview 
-          connectionInfo={connectionInfo}
-          stream={stream}
-        />
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
+          <div className="lg:col-span-2 space-y-6">
+            <VideoPreview 
+              connectionInfo={connectionInfo}
+              stream={stream}
+            />
+            
+            <VideoSettings 
+              connectionInfo={connectionInfo}
+              onSettingsChange={handleVideoSettingsChange}
+            />
+          </div>
+          
+          <div className="space-y-6">
+            <DeviceDiscovery />
+            
+            <ConnectionOptions 
+              connectionInfo={connectionInfo}
+              onConnectClick={connect}
+              onDisconnectClick={disconnect}
+            />
+          </div>
+        </div>
       </main>
       
       <Footer />

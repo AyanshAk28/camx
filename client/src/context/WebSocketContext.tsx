@@ -1,5 +1,5 @@
-import { createContext, useContext, useEffect, useState, ReactNode } from "react";
-import { ConnectionStatus, ConnectionInfo, SignalMessage } from "@shared/types";
+import { createContext, useContext, useEffect, useState, ReactNode, useCallback } from "react";
+import { ConnectionStatus, ConnectionInfo, SignalMessage, DeviceInfo, NetworkScanResult } from "@shared/types";
 
 interface WebSocketContextType {
   ws: WebSocket | null;
@@ -10,6 +10,9 @@ interface WebSocketContextType {
   stream: MediaStream | null;
   errorModalOpen: boolean;
   closeErrorModal: () => void;
+  discoveredDevices: DeviceInfo[];
+  scanForDevices: () => void;
+  connectToDevice: (deviceInfo: DeviceInfo) => void;
 }
 
 const WebSocketContext = createContext<WebSocketContextType | null>(null);
@@ -26,6 +29,7 @@ export const WebSocketProvider = ({ children }: WebSocketProviderProps) => {
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [errorModalOpen, setErrorModalOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string>();
+  const [discoveredDevices, setDiscoveredDevices] = useState<DeviceInfo[]>([]);
 
   const createWebSocketConnection = () => {
     const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
@@ -96,8 +100,29 @@ export const WebSocketProvider = ({ children }: WebSocketProviderProps) => {
         // Handle disconnect request
         disconnect();
         break;
+      case 'discovery-response':
+        // Handle discovery response with available devices
+        handleDiscoveryResponse(message);
+        break;
       default:
         console.warn('Unknown message type:', message.type);
+    }
+  };
+  
+  const handleDiscoveryResponse = (message: SignalMessage) => {
+    // Process discovered devices list
+    const scanResult = message.payload as NetworkScanResult;
+    console.log("Received device discovery response:", scanResult);
+    
+    if (scanResult && Array.isArray(scanResult.devices)) {
+      setDiscoveredDevices(scanResult.devices);
+      
+      // If we were in searching state, update to disconnected
+      if (connectionInfo.status === ConnectionStatus.SEARCHING) {
+        setConnectionInfo({
+          status: ConnectionStatus.DISCONNECTED
+        });
+      }
     }
   };
 
@@ -229,6 +254,52 @@ export const WebSocketProvider = ({ children }: WebSocketProviderProps) => {
     }
   };
 
+  // Function to scan for available devices on the network
+  const scanForDevices = useCallback(() => {
+    if (!ws || ws.readyState !== WebSocket.OPEN) {
+      console.error("WebSocket is not connected");
+      setErrorMessage("WebSocket is not connected. Please refresh the page and try again.");
+      setErrorModalOpen(true);
+      return;
+    }
+    
+    // Set status to searching
+    setConnectionInfo({
+      status: ConnectionStatus.SEARCHING
+    });
+    
+    // Send discovery request
+    sendMessage({
+      type: 'discovery',
+      payload: {},
+      from: 'browser-client'
+    });
+    
+    // Also make a direct API call to initiate a network scan
+    fetch('/api/devices/scan', {
+      method: 'POST',
+    })
+    .then(response => response.json())
+    .catch(error => {
+      console.error("Error initiating device scan:", error);
+    });
+    
+    // Clear previous devices while scanning
+    setDiscoveredDevices([]);
+  }, [ws]);
+  
+  // Function to connect to a specific discovered device
+  const connectToDevice = useCallback((deviceInfo: DeviceInfo) => {
+    if (!deviceInfo.ipAddress || !deviceInfo.port) {
+      setErrorMessage("Cannot connect to device: Missing IP address or port");
+      setErrorModalOpen(true);
+      return;
+    }
+    
+    // Connect using the WiFi method with device IP and port
+    connect("wifi", deviceInfo.ipAddress, deviceInfo.port);
+  }, []);
+  
   return (
     <WebSocketContext.Provider
       value={{
@@ -240,6 +311,9 @@ export const WebSocketProvider = ({ children }: WebSocketProviderProps) => {
         stream,
         errorModalOpen,
         closeErrorModal,
+        discoveredDevices,
+        scanForDevices,
+        connectToDevice,
       }}
     >
       {children}
