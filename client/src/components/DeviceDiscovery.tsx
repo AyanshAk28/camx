@@ -95,7 +95,7 @@ export const DeviceDiscovery = () => {
                 <Info className="h-8 w-8 text-muted-foreground mb-2 opacity-50" />
                 <h3 className="font-medium mb-1">No devices found</h3>
                 <p className="text-sm text-muted-foreground max-w-[250px]">
-                  Make sure your mobile device is connected to the same WiFi network and has the DroidCam app open.
+                  Make sure your mobile device is connected to the same WiFi network and has the CamX app open.
                 </p>
               </div>
             )}
