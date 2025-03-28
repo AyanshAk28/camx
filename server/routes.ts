@@ -167,7 +167,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           action: 'acknowledge',
           device: {
             id: 'server',
-            name: 'DroidCam Server',
+            name: 'CamX Server',
             ipAddress: getLocalIpAddress(),
             port: '5000'
           }
@@ -213,7 +213,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         action: 'scan',
         device: {
           id: 'server',
-          name: 'DroidCam Server',
+          name: 'CamX Server',
           ipAddress: getLocalIpAddress(),
           port: '5000'
         }
@@ -268,7 +268,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             action: 'scan',
             device: {
               id: 'server',
-              name: 'DroidCam Server',
+              name: 'CamX Server',
               ipAddress: getLocalIpAddress(),
               port: '5000'
             }

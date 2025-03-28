@@ -120,7 +120,7 @@ const ConnectionOptions = ({ connectionInfo, onConnectClick, onDisconnectClick }
               <div className="mt-4">
                 <div className="text-sm font-medium text-neutral-700 mb-2">Connection Instructions:</div>
                 <ol className="list-decimal pl-5 text-sm text-neutral-600 space-y-1">
-                  <li>Install DroidCam app on your mobile device</li>
+                  <li>Install CamX app on your mobile device</li>
                   <li>Ensure your phone and computer are on the same network</li>
                   <li>Open the app and note the IP address and port</li>
                   <li>Enter those details above and click Connect</li>
@@ -149,7 +149,7 @@ const ConnectionOptions = ({ connectionInfo, onConnectClick, onDisconnectClick }
               <div className="mt-4">
                 <div className="text-sm font-medium text-neutral-700 mb-2">Connection Instructions:</div>
                 <ol className="list-decimal pl-5 text-sm text-neutral-600 space-y-1">
-                  <li>Install DroidCam app on your mobile device</li>
+                  <li>Install CamX app on your mobile device</li>
                   <li>Connect your phone to the computer with a USB cable</li>
                   <li>Enable USB debugging in mobile device developer options</li>
                   <li>Open the app on your phone and click Connect</li>

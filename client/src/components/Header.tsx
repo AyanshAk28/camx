@@ -7,7 +7,7 @@ const Header = () => {
       <div className="container mx-auto px-4 flex justify-between items-center">
         <div className="flex items-center">
           <i className="fas fa-video text-2xl mr-2"></i>
-          <h1 className="text-xl font-bold">DroidCam</h1>
+          <h1 className="text-xl font-bold">CamX</h1>
         </div>
         <div className="flex items-center">
           <Button variant="ghost" size="icon" className="text-white hover:bg-secondary">
